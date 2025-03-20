@@ -54,7 +54,7 @@ const connectDB = async () => {
 
 connectDB();
 // Import routes
-const connectionRoutes = require('./routes/connection');
+const connectionRoutes = require('../routes/connection');
 app.use('/api', connectionRoutes);
 
 app.get("/", (req, res) => {
