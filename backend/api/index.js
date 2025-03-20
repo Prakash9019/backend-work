@@ -19,37 +19,37 @@ const io = new Server(server, {
 });
 app.set('io', io);
 
-// io.on('connection', (socket) => {
-//   console.log('A user connected:', socket.id);
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
 
-//   // Listen for an event to join a user's personal room
-//   socket.on('joinUser', (userId) => {
-//     socket.join(userId);
-//     console.log(`Socket ${socket.id} joined user room ${userId}`);
-//   });
+  // Listen for an event to join a user's personal room
+  socket.on('joinUser', (userId) => {
+    socket.join(userId);
+    console.log(`Socket ${socket.id} joined user room ${userId}`);
+  });
 
-//   // Also, clients can join a conversation room
-//   socket.on('joinRoom', (room) => {
-//     socket.join(room);
-//     console.log(`Socket ${socket.id} joined conversation room ${room}`);
-//   });
+  // Also, clients can join a conversation room
+  socket.on('joinRoom', (room) => {
+    socket.join(room);
+    console.log(`Socket ${socket.id} joined conversation room ${room}`);
+  });
 
-//   socket.on('disconnect', () => {
-//     console.log('User disconnected:', socket.id);
-//   });
-// });
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
 
-// // Connect to MongoDB (make sure MONGO_URI is set in your .env file)
-// mongoose.connect(process.env.MONGO_URI, { 
-//   useNewUrlParser: true, 
-//   useUnifiedTopology: true 
-// })
-// .then(() => console.log("MongoDB connected"))
-// .catch(err => console.error("MongoDB connection error:", err));
+// Connect to MongoDB (make sure MONGO_URI is set in your .env file)
+mongoose.connect("mongodb+srv://plsprakash2003:Surya_2003@cluster0.bpe9m.mongodb.net/Cluster0?retryWrites=true&w=majority", { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true 
+})
+.then(() => console.log("MongoDB connected"))
+.catch(err => console.error("MongoDB connection error:", err));
 
-// // Import routes
-// const connectionRoutes = require('./routes/connection');
-// app.use('/api', connectionRoutes);
+// Import routes
+const connectionRoutes = require('./routes/connection');
+app.use('/api', connectionRoutes);
 
 app.get("/", (req, res) => {
   res.json("API is running");
