@@ -8,8 +8,7 @@ function Chat({ connectionRequestId, currentUser, otherUser, users }) {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // Create a socket connection for this conversation
-    const newSocket = io('http://localhost:5000');
+    const newSocket = io(window.location.origin);
     setSocket(newSocket);
     newSocket.emit('joinRoom', connectionRequestId);
     return () => newSocket.disconnect();
@@ -18,7 +17,7 @@ function Chat({ connectionRequestId, currentUser, otherUser, users }) {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/chat/${connectionRequestId}`);
+        const res = await axios.get(`/api/chat/${connectionRequestId}`);
         setMessages(res.data);
       } catch (err) {
         console.error('Error fetching chat messages:', err);
@@ -42,15 +41,16 @@ function Chat({ connectionRequestId, currentUser, otherUser, users }) {
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
     try {
-      await axios.post('http://localhost:5000/api/chat/send', {
+      await axios.post('/api/chat/send', {
         connectionRequest: connectionRequestId,
         sender: currentUser,
         message: newMessage
       });
       setNewMessage('');
-      // Socket event will update messages automatically
+      // The new message will be received via socket
     } catch (err) {
       console.error('Error sending chat message:', err);
+      alert('Error sending chat message');
     }
   };
 

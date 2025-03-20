@@ -30,3 +30,5 @@ Thumbs.db
 frontend/build/
 backend/node_modules/
 
+
+.vercel

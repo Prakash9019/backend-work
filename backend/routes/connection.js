@@ -5,7 +5,7 @@ const router = express.Router();
 const ConnectionRequest = require('../models/ConnectionRequest');
 const ChatMessage = require('../models/ChatMessage');
 
-// POST: Send a connection request
+
 router.post('/connection-request', async (req, res) => {
   const { fromUser, toUser, message } = req.body;
   if (!fromUser || !toUser) {
@@ -17,11 +17,11 @@ router.post('/connection-request', async (req, res) => {
   try {
     const newRequest = new ConnectionRequest({ fromUser, toUser, message });
     await newRequest.save();
-    
-    // Emit the new connection request to the recipient's room
+
+    // Emit the connection request event to the recipient's room (using their user ID)
     const io = req.app.get('io');
     io.to(toUser).emit('newConnectionRequest', newRequest);
-    
+
     res.status(201).json({ message: 'Connection request sent', request: newRequest });
   } catch (err) {
     console.error('Error sending connection request:', err);
@@ -63,6 +63,7 @@ router.post('/connection-request/accept', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // GET: Retrieve accepted chats (conversations) for a user
 router.get('/chats/:userId', async (req, res) => {
