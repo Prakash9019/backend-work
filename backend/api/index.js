@@ -40,13 +40,19 @@ io.on('connection', (socket) => {
 });
 
 // Connect to MongoDB (make sure MONGO_URI is set in your .env file)
-mongoose.connect("mongodb+srv://plsprakash2003:Surya_2003@cluster0.bpe9m.mongodb.net/Cluster0?retryWrites=true&w=majority", { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
-})
-.then(() => console.log("MongoDB connected"))
-.catch(err => console.error("MongoDB connection error:", err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(
+      "mongodb+srv://plsprakash2003:Surya_2003@cluster0.bpe9m.mongodb.net/Cluster0?retryWrites=true&w=majority",
+    );
+    console.log("MongoDB connected successfully!");
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error.message);
+    process.exit(1); // Exit process with failure
+  }
+};
 
+connectDB();
 // Import routes
 const connectionRoutes = require('./routes/connection');
 app.use('/api', connectionRoutes);
