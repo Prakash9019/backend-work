@@ -1,5 +1,6 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const mongoose=require('mongoose');
+mongoose.set('strictQuery',true);
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require('http');
