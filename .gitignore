@@ -21,3 +21,12 @@ yarn-error.log*
 # Ignore OS-specific files
 .DS_Store
 Thumbs.db
+
+.vercel
+
+**/node_modules/
+**/.env
+**/.env.local
+frontend/build/
+backend/node_modules/
+
