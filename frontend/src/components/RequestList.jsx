@@ -7,7 +7,7 @@ function RequestList({ userId, setSelectedConnectionId, users, socket }) {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const res = await axios.get(`/api/connection-requests/${userId}`);
+        const res = await axios.get(`http://localhost:5000/api/connection-requests/${userId}`);
         setRequests(res.data);
       } catch (err) {
         console.error('Error fetching connection requests:', err);
@@ -16,8 +16,10 @@ function RequestList({ userId, setSelectedConnectionId, users, socket }) {
 
     fetchRequests();
 
+    // Listen for new connection requests in real time
     if (socket) {
       socket.on('newConnectionRequest', (newRequest) => {
+        // Check if this request is for the current user
         if (newRequest.toUser === userId) {
           setRequests(prev => [newRequest, ...prev]);
         }
@@ -35,13 +37,12 @@ function RequestList({ userId, setSelectedConnectionId, users, socket }) {
 
   const acceptRequest = async (requestId, fromUser, toUser) => {
     try {
-      await axios.post('/api/connection-request/accept', { requestId });
+      await axios.post('http://localhost:5000/api/connection-request/accept', { requestId });
       setRequests(requests.filter(req => req._id !== requestId));
       const otherUserId = userId === fromUser ? toUser : fromUser;
       setSelectedConnectionId({ id: requestId, otherUser: otherUserId });
     } catch (err) {
       console.error('Error accepting connection request:', err);
-      alert('Error accepting connection request');
     }
   };
 
@@ -57,7 +58,7 @@ function RequestList({ userId, setSelectedConnectionId, users, socket }) {
           </p>
           {request.message && <p><strong>Message:</strong> {request.message}</p>}
           <button onClick={() => acceptRequest(request._id, request.fromUser, request.toUser)}>
-            Accept & Chat
+            Accept &amp; Chat
           </button>
         </div>
       ))}

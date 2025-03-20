@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import SendRequest from './components/SendRequest';
 import RequestList from './components/RequestList';
-import ChatList from './components/ChatList'; // if needed
+import ChatList from './components/ChatList';
 import Chat from './components/Chat';
 
-// Sample users for demo (in production, get these from your backend/auth)
+// Sample data for 6 users
 const users = [
   { id: "630d7c8c2f9b9c1f88e0d1a1", name: "User1" },
   { id: "630d7c8c2f9b9c1f88e0d1a2", name: "User2" },
@@ -16,27 +16,48 @@ const users = [
 ];
 
 function App() {
-  // Simulate logged in user (for desktop or phone, set accordingly)
-  const [currentUser, setCurrentUser] = useState(users[0].id); // e.g., desktop = User1
+  const [currentUser, setCurrentUser] = useState(users[0].id); // Default: User1
   const [selectedConnection, setSelectedConnection] = useState(null);
   const [socket, setSocket] = useState(null);
 
+  // Create and maintain a global socket connection
   useEffect(() => {
-    // Connect to Socket.io using current origin so it works in production.
-    const newSocket = io(window.location.origin);
+    const newSocket = io('http://localhost:5000');
+    // Join the room with the current user's ID for notifications
     newSocket.emit('joinUser', currentUser);
     setSocket(newSocket);
+
     return () => newSocket.disconnect();
   }, [currentUser]);
 
   return (
     <div>
-      <h1>MERN Real-Time Chat App</h1>
-      <p>Logged in as: {currentUser}</p>
-      {/* In production, currentUser is automatically determined */}
+      <h1>MERN Multiuser Chat App</h1>
+      <div style={{ marginBottom: '20px' }}>
+        <label>Select Current User: </label>
+        <select
+          value={currentUser}
+          onChange={(e) => {
+            setCurrentUser(e.target.value);
+            setSelectedConnection(null);
+          }}
+        >
+          {users.map(user => (
+            <option key={user.id} value={user.id}>{user.name}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Send connection requests */}
       <SendRequest currentUser={currentUser} users={users} />
+
+      {/* Incoming connection requests (real-time notifications will update this list) */}
       <RequestList userId={currentUser} setSelectedConnectionId={setSelectedConnection} users={users} socket={socket} />
+
+      {/* Optional: A list of accepted chats */}
       <ChatList currentUser={currentUser} setSelectedConnection={setSelectedConnection} users={users} />
+
+      {/* Render Chat if a conversation is selected */}
       {selectedConnection && (
         <Chat
           connectionRequestId={selectedConnection.id}

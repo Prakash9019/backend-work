@@ -11,8 +11,7 @@ function SendRequest({ currentUser, users }) {
       return;
     }
     try {
-      // Using a relative URL so it works in production.
-      const res = await axios.post('/api/connection-request', { 
+      const res = await axios.post('http://localhost:5000/api/connection-request', { 
         fromUser: currentUser, 
         toUser, 
         message 
@@ -27,7 +26,6 @@ function SendRequest({ currentUser, users }) {
     }
   };
 
-  // Exclude current user from the list
   const availableUsers = users.filter(user => user.id !== currentUser);
 
   return (
